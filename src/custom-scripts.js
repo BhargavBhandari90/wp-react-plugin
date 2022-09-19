@@ -45,8 +45,6 @@ function MultiClock() {
     return(
         <div>
             <Clock />
-            <Clock />
-            <Clock />
         </div>
     );
 }
@@ -54,3 +52,36 @@ function MultiClock() {
 
 const root = ReactDOM.createRoot( document.getElementById( 'wproot' ) );
 root.render(<MultiClock />);
+
+
+/**
+ * Events
+ */
+
+class Toggle extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = { isON : true }
+
+        // This binding is necessary to make `this` work in the callback
+        this.toggleButton = this.toggleButton.bind(this);
+    }
+
+    toggleButton() {
+        this.setState(prevState => ({
+            isON : ! this.state.isON
+        }));
+    }
+
+    render() {
+        return (
+            <button onClick={this.toggleButton}>
+                { this.state.isON ? 'ON' : 'OFF' }
+            </button>
+        );
+    }
+}
+
+const button_seletor = ReactDOM.createRoot( document.getElementById('bunty-btn') );
+button_seletor.render(<Toggle />);

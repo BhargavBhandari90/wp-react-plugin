@@ -86,11 +86,56 @@ function MultiClock() {
     return React.createElement(
         'div',
         null,
-        React.createElement(Clock, null),
-        React.createElement(Clock, null),
         React.createElement(Clock, null)
     );
 }
 
 var root = ReactDOM.createRoot(document.getElementById('wproot'));
 root.render(React.createElement(MultiClock, null));
+
+/**
+ * Events
+ */
+
+var Toggle = function (_React$Component2) {
+    _inherits(Toggle, _React$Component2);
+
+    function Toggle(props) {
+        _classCallCheck(this, Toggle);
+
+        var _this3 = _possibleConstructorReturn(this, (Toggle.__proto__ || Object.getPrototypeOf(Toggle)).call(this, props));
+
+        _this3.state = { isON: true
+
+            // This binding is necessary to make `this` work in the callback
+        };_this3.toggleButton = _this3.toggleButton.bind(_this3);
+        return _this3;
+    }
+
+    _createClass(Toggle, [{
+        key: 'toggleButton',
+        value: function toggleButton() {
+            var _this4 = this;
+
+            this.setState(function (prevState) {
+                return {
+                    isON: !_this4.state.isON
+                };
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            return React.createElement(
+                'button',
+                { onClick: this.toggleButton },
+                this.state.isON ? 'ON' : 'OFF'
+            );
+        }
+    }]);
+
+    return Toggle;
+}(React.Component);
+
+var button_seletor = ReactDOM.createRoot(document.getElementById('bunty-btn'));
+button_seletor.render(React.createElement(Toggle, null));
