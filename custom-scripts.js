@@ -6,6 +6,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+/**
+ * Basic React class.
+ */
 var Clock = function (_React$Component) {
     _inherits(Clock, _React$Component);
 
@@ -94,7 +97,7 @@ var root = ReactDOM.createRoot(document.getElementById('wproot'));
 root.render(React.createElement(MultiClock, null));
 
 /**
- * Events
+ * Events Handleing with arguments.
  */
 
 var Toggle = function (_React$Component2) {
@@ -105,7 +108,7 @@ var Toggle = function (_React$Component2) {
 
         var _this3 = _possibleConstructorReturn(this, (Toggle.__proto__ || Object.getPrototypeOf(Toggle)).call(this, props));
 
-        _this3.state = { isON: true
+        _this3.state = { isON: true, changed: 0
 
             // This binding is necessary to make `this` work in the callback
         };_this3.toggleButton = _this3.toggleButton.bind(_this3);
@@ -114,12 +117,14 @@ var Toggle = function (_React$Component2) {
 
     _createClass(Toggle, [{
         key: 'toggleButton',
-        value: function toggleButton() {
+        value: function toggleButton(a) {
             var _this4 = this;
 
+            console.log(a);
             this.setState(function (prevState) {
                 return {
-                    isON: !_this4.state.isON
+                    isON: !_this4.state.isON,
+                    changed: a
                 };
             });
         }
@@ -128,8 +133,11 @@ var Toggle = function (_React$Component2) {
         value: function render() {
             return React.createElement(
                 'button',
-                { onClick: this.toggleButton },
-                this.state.isON ? 'ON' : 'OFF'
+                { onClick: this.toggleButton.bind(this, this.state.changed + 1) },
+                this.state.isON ? 'ON' : 'OFF',
+                'Changed: ',
+                this.state.changed,
+                ' times.'
             );
         }
     }]);

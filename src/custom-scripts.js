@@ -1,3 +1,6 @@
+/**
+ * Basic React class.
+ */
 class Clock extends React.Component {
 
     constructor(props) {
@@ -55,29 +58,32 @@ root.render(<MultiClock />);
 
 
 /**
- * Events
+ * Events Handleing with arguments.
  */
 
 class Toggle extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { isON : true }
+        this.state = { isON : true, changed : 0 }
 
         // This binding is necessary to make `this` work in the callback
         this.toggleButton = this.toggleButton.bind(this);
     }
 
-    toggleButton() {
+    toggleButton(a) {
+        console.log(a);
         this.setState(prevState => ({
-            isON : ! this.state.isON
+            isON   : ! this.state.isON,
+            changed: a
         }));
     }
 
     render() {
         return (
-            <button onClick={this.toggleButton}>
-                { this.state.isON ? 'ON' : 'OFF' }
+            <button onClick={this.toggleButton.bind(this, this.state.changed + 1)}>
+                { this.state.isON ? 'ON' : 'OFF' } 
+                Changed: {this.state.changed} times.
             </button>
         );
     }
