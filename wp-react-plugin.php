@@ -42,5 +42,20 @@ add_action( 'wp_enqueue_scripts', 'react_scripts' );
 function react_scripts() {
     wp_enqueue_script( 'react-wp', 'https://unpkg.com/react@18/umd/react.development.js', array(), WPR_VERSION, true );
     wp_enqueue_script( 'react-dom-wp', 'https://unpkg.com/react-dom@18/umd/react-dom.development.js', array( 'react-wp' ), WPR_VERSION, true );
-    wp_enqueue_script( 'react-custom', trailingslashit( WPR_URL ) . 'custom-scripts.js', array( 'react-wp', 'react-dom-wp' ), WPR_VERSION, true );
+    wp_enqueue_script(
+        'react-custom',
+        trailingslashit( WPR_URL ) . 'custom-scripts.js',
+        array( 'react-wp', 'react-dom-wp' ),
+        WPR_VERSION,
+        true
+    );
+
+    $user = wp_get_current_user();
+    $user_name = $user->user_login;
+
+    $data = array(
+        'current_user_name' => $user_name,
+    );
+
+    wp_localize_script( 'react-custom', 'bb_react' , $data );
 }
