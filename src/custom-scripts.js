@@ -220,7 +220,9 @@ if ( document.getElementById('bunty-form') ) {
         constructor(props) {
             super(props);
             this.state = {
-                val: ''
+                ttitle: '',
+                tarea: '',
+                tselect: '',
             };
             this.handleChange = this.handleChange.bind(this);
             this.handleSubmit = this.handleSubmit.bind(this);
@@ -229,7 +231,7 @@ if ( document.getElementById('bunty-form') ) {
         handleSubmit(event) {
 
             this.setState({
-                val: this.state.val,
+                [event.target.name]: event.target.value
             });
 
             event.preventDefault();
@@ -237,8 +239,9 @@ if ( document.getElementById('bunty-form') ) {
         }
 
         handleChange(event) {
+
             this.setState({
-                val: event.target.value,
+                [event.target.name]: event.target.value
             });
         }
 
@@ -246,10 +249,25 @@ if ( document.getElementById('bunty-form') ) {
             return(
                 <div>
                     <form onSubmit={this.handleSubmit}>
-                        <input type="text" name="title" value={this.state.val} onChange={this.handleChange}/>
+                        <input type="text" name="ttitle" value={this.state.ttitle} onChange={this.handleChange}/>
+                        <label>
+                            Essay:
+                            <textarea name="tarea" value={this.state.tarea} onChange={this.handleChange} />
+                        </label>
+                        <label>
+                            Pick your favorite flavor:
+                            <select name="tselect" value={this.state.tselect} onChange={this.handleChange}>
+                                <option value="grapefruit">Grapefruit</option>
+                                <option value="lime">Lime</option>
+                                <option value="coconut">Coconut</option>
+                                <option value="mango">Mango</option>
+                            </select>
+                        </label>
                         <input type="submit" value="Submit" />
                     </form>
-                    <div>{this.state.val}</div>
+                    <div>{this.state.ttitle}</div>
+                    <div>{this.state.tarea}</div>
+                    <div>{this.state.tselect}</div>
                 </div>
             )
         }

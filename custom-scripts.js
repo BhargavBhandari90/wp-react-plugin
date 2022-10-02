@@ -1,5 +1,7 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -318,7 +320,9 @@ if (document.getElementById('bunty-form')) {
             var _this7 = _possibleConstructorReturn(this, (Form.__proto__ || Object.getPrototypeOf(Form)).call(this, props));
 
             _this7.state = {
-                val: ''
+                ttitle: '',
+                tarea: '',
+                tselect: ''
             };
             _this7.handleChange = _this7.handleChange.bind(_this7);
             _this7.handleSubmit = _this7.handleSubmit.bind(_this7);
@@ -329,18 +333,15 @@ if (document.getElementById('bunty-form')) {
             key: 'handleSubmit',
             value: function handleSubmit(event) {
 
-                this.setState({
-                    val: this.state.val
-                });
+                this.setState(_defineProperty({}, event.target.name, event.target.value));
 
                 event.preventDefault();
             }
         }, {
             key: 'handleChange',
             value: function handleChange(event) {
-                this.setState({
-                    val: event.target.value
-                });
+
+                this.setState(_defineProperty({}, event.target.name, event.target.value));
             }
         }, {
             key: 'render',
@@ -351,13 +352,58 @@ if (document.getElementById('bunty-form')) {
                     React.createElement(
                         'form',
                         { onSubmit: this.handleSubmit },
-                        React.createElement('input', { type: 'text', name: 'title', value: this.state.val, onChange: this.handleChange }),
+                        React.createElement('input', { type: 'text', name: 'ttitle', value: this.state.ttitle, onChange: this.handleChange }),
+                        React.createElement(
+                            'label',
+                            null,
+                            'Essay:',
+                            React.createElement('textarea', { name: 'tarea', value: this.state.tarea, onChange: this.handleChange })
+                        ),
+                        React.createElement(
+                            'label',
+                            null,
+                            'Pick your favorite flavor:',
+                            React.createElement(
+                                'select',
+                                { name: 'tselect', value: this.state.tselect, onChange: this.handleChange },
+                                React.createElement(
+                                    'option',
+                                    { value: 'grapefruit' },
+                                    'Grapefruit'
+                                ),
+                                React.createElement(
+                                    'option',
+                                    { value: 'lime' },
+                                    'Lime'
+                                ),
+                                React.createElement(
+                                    'option',
+                                    { value: 'coconut' },
+                                    'Coconut'
+                                ),
+                                React.createElement(
+                                    'option',
+                                    { value: 'mango' },
+                                    'Mango'
+                                )
+                            )
+                        ),
                         React.createElement('input', { type: 'submit', value: 'Submit' })
                     ),
                     React.createElement(
                         'div',
                         null,
-                        this.state.val
+                        this.state.ttitle
+                    ),
+                    React.createElement(
+                        'div',
+                        null,
+                        this.state.tarea
+                    ),
+                    React.createElement(
+                        'div',
+                        null,
+                        this.state.tselect
                     )
                 );
             }
