@@ -9,6 +9,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /** global bb_react */
+// import { Editor } from '@tinymce/tinymce-react';
 /**
  * Basic React class.
  */
@@ -415,3 +416,177 @@ if (document.getElementById('bunty-form')) {
     var bb_form = ReactDOM.createRoot(document.getElementById('bunty-form'));
     bb_form.render(React.createElement(Form, null));
 }
+
+/**
+ * Lifting state
+ */
+
+if (document.getElementById('bunty-statelift')) {
+    var BoilingVerdict = function BoilingVerdict(props) {
+        if (props.temperature >= 100) {
+            return React.createElement(
+                'p',
+                null,
+                'Water will boil'
+            );
+        } else {
+            return React.createElement(
+                'p',
+                null,
+                'Water won\'t boil'
+            );
+        }
+    };
+
+    var toCelsius = function toCelsius(fahrenheit) {
+        if (!fahrenheit) return 0;
+        return (fahrenheit - 32) * 5 / 9;
+    };
+
+    var toFahrenheit = function toFahrenheit(celsius) {
+        if (!celsius) return 0;
+        return celsius * 9 / 5 + 32;
+    };
+
+    var tryConvert = function tryConvert(temperature, convert) {
+        console.log(convert);
+        var input = parseFloat(temperature);
+        if (Number.isNaN(input)) {
+            return '';
+        }
+        var output = convert(input);
+        var rounded = Math.round(output * 1000) / 1000;
+        return rounded.toString();
+    };
+
+    var scaleNames = { c: 'Celsius', f: 'Fahrenheit' };
+
+    var TempInput = function (_React$Component5) {
+        _inherits(TempInput, _React$Component5);
+
+        function TempInput(props) {
+            _classCallCheck(this, TempInput);
+
+            var _this8 = _possibleConstructorReturn(this, (TempInput.__proto__ || Object.getPrototypeOf(TempInput)).call(this, props));
+
+            _this8.handleChange = _this8.handleChange.bind(_this8);
+            _this8.state = {
+                temperature: '',
+                scale: 'c'
+            };
+            return _this8;
+        }
+
+        _createClass(TempInput, [{
+            key: 'handleChange',
+            value: function handleChange(event) {
+                // this.setState({
+                //     temperature: event.target.value
+                // });
+                this.props.onTemperatureChange(event.target.value);
+            }
+        }, {
+            key: 'render',
+            value: function render() {
+                var temperature = this.props.temperature;
+                return React.createElement(
+                    'div',
+                    null,
+                    React.createElement(
+                        'legend',
+                        null,
+                        'Enter temperature in ',
+                        scaleNames[this.props.scale],
+                        ':'
+                    ),
+                    React.createElement('input', { value: temperature, onChange: this.handleChange })
+                );
+            }
+        }]);
+
+        return TempInput;
+    }(React.Component);
+
+    var Calculator = function (_React$Component6) {
+        _inherits(Calculator, _React$Component6);
+
+        function Calculator(props) {
+            _classCallCheck(this, Calculator);
+
+            var _this9 = _possibleConstructorReturn(this, (Calculator.__proto__ || Object.getPrototypeOf(Calculator)).call(this, props));
+
+            _this9.handleCelsiusChange = _this9.handleCelsiusChange.bind(_this9);
+            _this9.handleFahrenheitChange = _this9.handleFahrenheitChange.bind(_this9);
+            _this9.state = {
+                temperature: '',
+                scale: 'c'
+            };
+            return _this9;
+        }
+
+        _createClass(Calculator, [{
+            key: 'handleCelsiusChange',
+            value: function handleCelsiusChange(temperature) {
+                this.setState({ scale: 'c', temperature: temperature });
+            }
+        }, {
+            key: 'handleFahrenheitChange',
+            value: function handleFahrenheitChange(temperature) {
+                this.setState({ scale: 'f', temperature: temperature });
+            }
+        }, {
+            key: 'render',
+            value: function render() {
+
+                var temperature = this.state.temperature;
+                var scale = this.state.scale;
+                console.log(scale);
+                var celc = 'f' == scale ? toCelsius(temperature) : temperature;
+                var far = 'c' == scale ? toFahrenheit(temperature) : temperature;
+
+                return React.createElement(
+                    'fieldset',
+                    null,
+                    React.createElement(TempInput, { onTemperatureChange: this.handleCelsiusChange, temperature: celc, scale: 'c' }),
+                    React.createElement(TempInput, { onTemperatureChange: this.handleFahrenheitChange, temperature: far, scale: 'f' }),
+                    React.createElement(BoilingVerdict, { temperature: parseFloat(celc) })
+                );
+            }
+        }]);
+
+        return Calculator;
+    }(React.Component);
+
+    var water_boil = ReactDOM.createRoot(document.getElementById('bunty-statelift'));
+    water_boil.render(React.createElement(
+        'div',
+        null,
+        React.createElement(Calculator, null)
+    ));
+}
+
+// if ( document.getElementById('bunty-tmc') ) {
+//     class Tinymce extends React.Component {
+
+//         handleEditorChange = (e) => {
+//             console.log('Content was updated:', e.target.getContent());
+//           }
+
+//           render() {
+//             return (
+//               <Editor
+//                 initialValue="<p>This is the initial content of the editor</p>"
+//                 init={{
+//                   plugins: 'link image code',
+//                   toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code'
+//                 }}
+//                 onChange={this.handleEditorChange}
+//               />
+//             );
+//           }
+//     }
+
+//     const tinymcebb = ReactDOM.createRoot(document.getElementById('bunty-tmc'));
+//     tinymcebb.render(<Tinymce />);
+
+// }

@@ -1,4 +1,5 @@
 /** global bb_react */
+// import { Editor } from '@tinymce/tinymce-react';
 /**
  * Basic React class.
  */
@@ -278,3 +279,142 @@ if ( document.getElementById('bunty-form') ) {
     bb_form.render( <Form /> );
 
 }
+
+/**
+ * Lifting state
+ */
+
+ if ( document.getElementById('bunty-statelift') ) {
+
+    function BoilingVerdict(props) {
+        if (props.temperature >= 100) {
+            return <p>Water will boil</p>;
+        } else {
+            return <p>Water won't boil</p>;
+        }
+    }
+
+    function toCelsius(fahrenheit) {
+        if ( ! fahrenheit ) return 0;
+        return (fahrenheit - 32) * 5 / 9;
+    }
+
+    function toFahrenheit(celsius) {
+        if ( ! celsius ) return 0;
+        return (celsius * 9 / 5) + 32;
+    }
+
+    function tryConvert(temperature, convert) {
+        console.log(convert);
+        const input = parseFloat(temperature);
+        if (Number.isNaN(input)) {
+            return '';
+        }
+        const output = convert(input);
+        const rounded = Math.round(output * 1000) / 1000;
+        return rounded.toString();
+    }
+
+    const scaleNames = { c: 'Celsius', f: 'Fahrenheit' };
+
+    class TempInput extends React.Component {
+        constructor(props) {
+            super(props);
+            this.handleChange = this.handleChange.bind(this);
+            this.state = {
+                temperature: '',
+                scale: 'c',
+            };
+        }
+
+        handleChange( event ) {
+            // this.setState({
+            //     temperature: event.target.value
+            // });
+            this.props.onTemperatureChange(event.target.value);
+        }
+
+        render() {
+            const temperature = this.props.temperature;
+            return (
+              <div>
+                <legend>Enter temperature in {scaleNames[this.props.scale]}:</legend>
+                <input value={temperature} onChange={this.handleChange} />
+              </div>
+            );
+          }
+    }
+
+    class Calculator extends React.Component {
+        constructor(props) {
+            super(props);
+            this.handleCelsiusChange = this.handleCelsiusChange.bind(this);
+            this.handleFahrenheitChange = this.handleFahrenheitChange.bind(this);
+            this.state = {
+                temperature: '',
+                scale: 'c'
+            };
+        }
+
+        handleCelsiusChange(temperature) {
+            this.setState({scale: 'c', temperature});
+        }
+
+        handleFahrenheitChange(temperature) {
+            this.setState({scale: 'f', temperature});
+        }
+
+        render() {
+
+          const temperature = this.state.temperature;
+          const scale = this.state.scale;
+          console.log(scale);
+          const celc = 'f' == scale ? toCelsius( temperature ) : temperature
+          const far = 'c' == scale ? toFahrenheit( temperature ) : temperature;
+
+          return (
+            <fieldset>
+              <TempInput onTemperatureChange={this.handleCelsiusChange} temperature={celc} scale="c" />
+              <TempInput onTemperatureChange={this.handleFahrenheitChange} temperature={far} scale="f"/>
+              <BoilingVerdict temperature={parseFloat(celc)} />
+            </fieldset>
+          );
+        }
+      }
+
+    const water_boil = ReactDOM.createRoot(document.getElementById('bunty-statelift'));
+    water_boil.render(
+        <div>
+            <Calculator />
+        </div>
+    );
+
+}
+
+
+
+// if ( document.getElementById('bunty-tmc') ) {
+//     class Tinymce extends React.Component {
+
+//         handleEditorChange = (e) => {
+//             console.log('Content was updated:', e.target.getContent());
+//           }
+        
+//           render() {
+//             return (
+//               <Editor
+//                 initialValue="<p>This is the initial content of the editor</p>"
+//                 init={{
+//                   plugins: 'link image code',
+//                   toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code'
+//                 }}
+//                 onChange={this.handleEditorChange}
+//               />
+//             );
+//           }
+//     }
+
+//     const tinymcebb = ReactDOM.createRoot(document.getElementById('bunty-tmc'));
+//     tinymcebb.render(<Tinymce />);
+
+// }
