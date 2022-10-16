@@ -391,30 +391,217 @@ if ( document.getElementById('bunty-form') ) {
 
 }
 
+/**
+ * Composition vs Inheritance
+ */
+
+if ( document.getElementById('bunty-border') ) {
+
+    function FancyBorder(props) {
+        console.log(props.children);
+        return (
+            <div className={'FancyBorder FancyBorder-' + props.color}>
+                {props.children}
+            </div>
+        );
+    }
+
+    function WelcomeDialog() {
+        return (
+            <FancyBorder color="blue">
+                <h1 className="Dialog-title">Welcome</h1>
+                <p className="Dialog-message">Thank you for visiting our spacecraft!</p>
+            </FancyBorder>
+        );
+    }
+
+    const child_border = ReactDOM.createRoot(document.getElementById('bunty-border'));
+    child_border.render(<WelcomeDialog/>);
+
+}
+
+if ( document.getElementById('bunty-table') ) {
+    class TableRow extends React.Component {
+
+        render() {
+            const product = this.props.product;
+            const type = this.props.type;
+
+            if ( 'head' == type ) {
+
+                return (
+                    <tr>
+                        <th colSpan="2">{product.category}</th>
+                    </tr>
+                )
+
+            } else {
+
+                const stocked = product.stocked;
+                let pname     = product.name;
+
+                if ( ! stocked ) {
+                    pname = <span style={{color: 'red', padding: '10px'}}>{product.name}</span>;
+                }
+
+                return (
+                    <tr>
+                        <td>{pname}</td>
+                        <td>{product.price}</td>
+                    </tr>
+                )
+
+            }
+        }
+
+    }
+
+    class ProductTable extends React.Component {
+
+        constructor(props) {
+            super(props);
+            this.state = {};
+        }
+
+        render() {
+            const rows = [];
+            const products = this.props.products;
+            let category = '';
+
+            const filterText  = this.props.filterText;
+            const inStockOnly = this.props.inStockOnly;
+
+            products.forEach(product => {
+
+                if (product.name.indexOf(filterText) === -1) {
+                    return;
+                }
+                if (inStockOnly && !product.stocked) {
+                    return;
+                }
+
+                if ( category != product.category )
+                    rows.push( <TableRow product={product} key={product.id+"-h"} type="head" /> );
+
+                rows.push( <TableRow product={product} key={product.id} type="row" /> );
+
+                category = product.category;
+            });
+
+            return (
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {rows}
+                    </tbody>
+                </table>
+            )
+        }
+
+    }
 
 
-// if ( document.getElementById('bunty-tmc') ) {
-//     class Tinymce extends React.Component {
+    class SearchBar extends React.Component {
 
-//         handleEditorChange = (e) => {
-//             console.log('Content was updated:', e.target.getContent());
-//           }
-        
-//           render() {
-//             return (
-//               <Editor
-//                 initialValue="<p>This is the initial content of the editor</p>"
-//                 init={{
-//                   plugins: 'link image code',
-//                   toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code'
-//                 }}
-//                 onChange={this.handleEditorChange}
-//               />
-//             );
-//           }
-//     }
+        constructor(props) {
+            super(props);
+            this.state = {
+                filterText: '',
+                inStockOnly: false
+            };
 
-//     const tinymcebb = ReactDOM.createRoot(document.getElementById('bunty-tmc'));
-//     tinymcebb.render(<Tinymce />);
+            this.searchProduct = this.searchProduct.bind(this);
+            this.checkInstoke = this.checkInstoke.bind(this);
 
-// }
+        }
+
+        searchProduct(e) {
+            this.props.searchProduct(e.target.value);
+        }
+
+        checkInstoke(e) {
+            this.props.checkInstoke(e.target.checked);
+        }
+
+        render() {
+
+            const filterText  = this.props.filterText;
+            const inStockOnly = this.props.inStockOnly;
+
+            return (
+                <form>
+                    <input type="text" placeholder="Search..." value={filterText} onChange={this.searchProduct} />
+                    <p>
+                        <input type="checkbox" checked={inStockOnly} onChange={this.checkInstoke} />
+                        {'  '}
+                        Only show products in stock
+                    </p>
+                </form>
+            )
+        }
+
+    }
+
+    class FilterableProductTable extends React.Component {
+        constructor(props) {
+            super(props);
+            this.state = {
+                filterText: '',
+                inStockOnly: false
+            };
+
+            this.searchProduct = this.searchProduct.bind(this);
+            this.checkInstoke = this.checkInstoke.bind(this);
+
+        }
+
+        searchProduct(status) {
+            this.setState({
+                filterText: status,
+            });
+        }
+
+        checkInstoke(status) {
+            this.setState({
+                inStockOnly: status,
+            });
+        }
+
+        render() {
+          return (
+            <div>
+              <SearchBar
+                filterText={this.state.filterText}
+                inStockOnly={this.state.inStockOnly}
+                searchProduct={this.searchProduct}
+                checkInstoke={this.checkInstoke}
+                />
+              <ProductTable
+                filterText={this.state.filterText}
+                inStockOnly={this.state.inStockOnly}
+                products={this.props.products}
+                />
+            </div>
+          );
+        }
+      }
+
+
+    const products = [
+        {id: 1, category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football'},
+        {id: 2, category: 'Sporting Goods', price: '$9.99', stocked: true, name: 'Baseball'},
+        {id: 3, category: 'Sporting Goods', price: '$29.99', stocked: false, name: 'Basketball'},
+        {id: 4, category: 'Electronics', price: '$99.99', stocked: true, name: 'iPod Touch'},
+        {id: 5, category: 'Electronics', price: '$399.99', stocked: false, name: 'iPhone 5'},
+        {id: 6, category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7'}
+      ];
+
+    const bwp_table = ReactDOM.createRoot(document.getElementById('bunty-table'));
+    bwp_table.render(<FilterableProductTable products={products} />);
+
+}

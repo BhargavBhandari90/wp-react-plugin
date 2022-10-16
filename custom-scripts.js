@@ -565,28 +565,286 @@ if (document.getElementById('bunty-statelift')) {
     ));
 }
 
-// if ( document.getElementById('bunty-tmc') ) {
-//     class Tinymce extends React.Component {
+/**
+ * Composition vs Inheritance
+ */
 
-//         handleEditorChange = (e) => {
-//             console.log('Content was updated:', e.target.getContent());
-//           }
+if (document.getElementById('bunty-border')) {
+    var FancyBorder = function FancyBorder(props) {
+        console.log(props.children);
+        return React.createElement(
+            'div',
+            { className: 'FancyBorder FancyBorder-' + props.color },
+            props.children
+        );
+    };
 
-//           render() {
-//             return (
-//               <Editor
-//                 initialValue="<p>This is the initial content of the editor</p>"
-//                 init={{
-//                   plugins: 'link image code',
-//                   toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code'
-//                 }}
-//                 onChange={this.handleEditorChange}
-//               />
-//             );
-//           }
-//     }
+    var WelcomeDialog = function WelcomeDialog() {
+        return React.createElement(
+            FancyBorder,
+            { color: 'blue' },
+            React.createElement(
+                'h1',
+                { className: 'Dialog-title' },
+                'Welcome'
+            ),
+            React.createElement(
+                'p',
+                { className: 'Dialog-message' },
+                'Thank you for visiting our spacecraft!'
+            )
+        );
+    };
 
-//     const tinymcebb = ReactDOM.createRoot(document.getElementById('bunty-tmc'));
-//     tinymcebb.render(<Tinymce />);
+    var child_border = ReactDOM.createRoot(document.getElementById('bunty-border'));
+    child_border.render(React.createElement(WelcomeDialog, null));
+}
 
-// }
+if (document.getElementById('bunty-table')) {
+    var TableRow = function (_React$Component7) {
+        _inherits(TableRow, _React$Component7);
+
+        function TableRow() {
+            _classCallCheck(this, TableRow);
+
+            return _possibleConstructorReturn(this, (TableRow.__proto__ || Object.getPrototypeOf(TableRow)).apply(this, arguments));
+        }
+
+        _createClass(TableRow, [{
+            key: 'render',
+            value: function render() {
+                var product = this.props.product;
+                var type = this.props.type;
+
+                if ('head' == type) {
+
+                    return React.createElement(
+                        'tr',
+                        null,
+                        React.createElement(
+                            'th',
+                            { colSpan: '2' },
+                            product.category
+                        )
+                    );
+                } else {
+
+                    var stocked = product.stocked;
+                    var pname = product.name;
+
+                    if (!stocked) {
+                        pname = React.createElement(
+                            'span',
+                            { style: { color: 'red', padding: '10px' } },
+                            product.name
+                        );
+                    }
+
+                    return React.createElement(
+                        'tr',
+                        null,
+                        React.createElement(
+                            'td',
+                            null,
+                            pname
+                        ),
+                        React.createElement(
+                            'td',
+                            null,
+                            product.price
+                        )
+                    );
+                }
+            }
+        }]);
+
+        return TableRow;
+    }(React.Component);
+
+    var ProductTable = function (_React$Component8) {
+        _inherits(ProductTable, _React$Component8);
+
+        function ProductTable(props) {
+            _classCallCheck(this, ProductTable);
+
+            var _this11 = _possibleConstructorReturn(this, (ProductTable.__proto__ || Object.getPrototypeOf(ProductTable)).call(this, props));
+
+            _this11.state = {};
+            return _this11;
+        }
+
+        _createClass(ProductTable, [{
+            key: 'render',
+            value: function render() {
+                var rows = [];
+                var products = this.props.products;
+                var category = '';
+
+                var filterText = this.props.filterText;
+                var inStockOnly = this.props.inStockOnly;
+
+                products.forEach(function (product) {
+
+                    if (product.name.indexOf(filterText) === -1) {
+                        return;
+                    }
+                    if (inStockOnly && !product.stocked) {
+                        return;
+                    }
+
+                    if (category != product.category) rows.push(React.createElement(TableRow, { product: product, key: product.id + "-h", type: 'head' }));
+
+                    rows.push(React.createElement(TableRow, { product: product, key: product.id, type: 'row' }));
+
+                    category = product.category;
+                });
+
+                return React.createElement(
+                    'table',
+                    null,
+                    React.createElement(
+                        'thead',
+                        null,
+                        React.createElement(
+                            'tr',
+                            null,
+                            React.createElement(
+                                'th',
+                                null,
+                                'Name'
+                            ),
+                            React.createElement(
+                                'th',
+                                null,
+                                'Price'
+                            )
+                        )
+                    ),
+                    React.createElement(
+                        'tbody',
+                        null,
+                        rows
+                    )
+                );
+            }
+        }]);
+
+        return ProductTable;
+    }(React.Component);
+
+    var SearchBar = function (_React$Component9) {
+        _inherits(SearchBar, _React$Component9);
+
+        function SearchBar(props) {
+            _classCallCheck(this, SearchBar);
+
+            var _this12 = _possibleConstructorReturn(this, (SearchBar.__proto__ || Object.getPrototypeOf(SearchBar)).call(this, props));
+
+            _this12.state = {
+                filterText: '',
+                inStockOnly: false
+            };
+
+            _this12.searchProduct = _this12.searchProduct.bind(_this12);
+            _this12.checkInstoke = _this12.checkInstoke.bind(_this12);
+
+            return _this12;
+        }
+
+        _createClass(SearchBar, [{
+            key: 'searchProduct',
+            value: function searchProduct(e) {
+                this.props.searchProduct(e.target.value);
+            }
+        }, {
+            key: 'checkInstoke',
+            value: function checkInstoke(e) {
+                this.props.checkInstoke(e.target.checked);
+            }
+        }, {
+            key: 'render',
+            value: function render() {
+
+                var filterText = this.props.filterText;
+                var inStockOnly = this.props.inStockOnly;
+
+                return React.createElement(
+                    'form',
+                    null,
+                    React.createElement('input', { type: 'text', placeholder: 'Search...', value: filterText, onChange: this.searchProduct }),
+                    React.createElement(
+                        'p',
+                        null,
+                        React.createElement('input', { type: 'checkbox', checked: inStockOnly, onChange: this.checkInstoke }),
+                        '  ',
+                        'Only show products in stock'
+                    )
+                );
+            }
+        }]);
+
+        return SearchBar;
+    }(React.Component);
+
+    var FilterableProductTable = function (_React$Component10) {
+        _inherits(FilterableProductTable, _React$Component10);
+
+        function FilterableProductTable(props) {
+            _classCallCheck(this, FilterableProductTable);
+
+            var _this13 = _possibleConstructorReturn(this, (FilterableProductTable.__proto__ || Object.getPrototypeOf(FilterableProductTable)).call(this, props));
+
+            _this13.state = {
+                filterText: '',
+                inStockOnly: false
+            };
+
+            _this13.searchProduct = _this13.searchProduct.bind(_this13);
+            _this13.checkInstoke = _this13.checkInstoke.bind(_this13);
+
+            return _this13;
+        }
+
+        _createClass(FilterableProductTable, [{
+            key: 'searchProduct',
+            value: function searchProduct(status) {
+                this.setState({
+                    filterText: status
+                });
+            }
+        }, {
+            key: 'checkInstoke',
+            value: function checkInstoke(status) {
+                this.setState({
+                    inStockOnly: status
+                });
+            }
+        }, {
+            key: 'render',
+            value: function render() {
+                return React.createElement(
+                    'div',
+                    null,
+                    React.createElement(SearchBar, {
+                        filterText: this.state.filterText,
+                        inStockOnly: this.state.inStockOnly,
+                        searchProduct: this.searchProduct,
+                        checkInstoke: this.checkInstoke
+                    }),
+                    React.createElement(ProductTable, {
+                        filterText: this.state.filterText,
+                        inStockOnly: this.state.inStockOnly,
+                        products: this.props.products
+                    })
+                );
+            }
+        }]);
+
+        return FilterableProductTable;
+    }(React.Component);
+
+    var products = [{ id: 1, category: 'Sporting Goods', price: '$49.99', stocked: true, name: 'Football' }, { id: 2, category: 'Sporting Goods', price: '$9.99', stocked: true, name: 'Baseball' }, { id: 3, category: 'Sporting Goods', price: '$29.99', stocked: false, name: 'Basketball' }, { id: 4, category: 'Electronics', price: '$99.99', stocked: true, name: 'iPod Touch' }, { id: 5, category: 'Electronics', price: '$399.99', stocked: false, name: 'iPhone 5' }, { id: 6, category: 'Electronics', price: '$199.99', stocked: true, name: 'Nexus 7' }];
+
+    var bwp_table = ReactDOM.createRoot(document.getElementById('bunty-table'));
+    bwp_table.render(React.createElement(FilterableProductTable, { products: products }));
+}
